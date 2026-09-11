@@ -82,7 +82,7 @@ Proposal operations (advisor-only, all `:effect :propose`):
 - `:request-equipment-time` — propose equipment allocation/scheduling.
 
 ```bash
-clojure -M:test
+kbb -M:test
 ```
 
 This is what backs this repo's `:maturity :implemented` entry in
