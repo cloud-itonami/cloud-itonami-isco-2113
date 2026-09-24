@@ -1,0 +1,32 @@
+;; What this vertical's robot physically does, declared for
+;; kotoba.robotics.process (kotoba-lang/robotics). `kbb -M:physics` runs it.
+;;
+;; README "Robotics premise": a lab advisor proposes analysis pipelines,
+;; reports and equipment scheduling for chemists (ISCO 2113) under a governor
+;; that enforces lab safety. The physical lab work: pumping reagent through
+;; flow-chemistry capillary tubing, and moving 2.5 L solvent bottles from the
+;; solvent cabinet into the fume hood.
+;;
+;; Every number without a cited source is marked `estimate` in its :basis.
+;; Replacing an estimate with a sourced value is this bot's growth work.
+{:physics/schema "itonami.physical-ai.spec.v1"
+ :repo "cloud-itonami/cloud-itonami-isco-2113"
+ :cases
+ [{:id :flow-reactor-feed
+   :kind :pipe-flow
+   :procedure "pump feeds ethanol through 2 m of 0.25 mm bore capillary tubing into the flow reactor"
+   :params {:diameter-m 0.00025 :length-m 2.0 :roughness-m 1.5e-6
+            :density-kg-m3 789.0 :viscosity-pa-s 1.2e-3 :pump-efficiency 0.5 :elevation-m 0.0}
+   :sweep {:param :q-m3s :values [1.67e-8 3.33e-8 8.33e-8 1.67e-7 3.33e-7]}
+   :quantity :pressure-drop-pa
+   :limit {:max 1.0e6 :basis "estimate: 10 bar working pressure assumed for the capillary fittings and back-pressure regulator"}
+   :boundary {:lo 1.0e-9 :hi 5.0e-7}}
+  {:id :solvent-bottle-to-hood
+   :kind :manipulator
+   :procedure "arm lifts a 2.5 L solvent bottle from the low solvent cabinet onto the fume-hood work surface"
+   :params {:l1-m 0.45 :l2-m 0.40 :m1-kg 4.0 :m2-kg 3.0
+            :from [0.45 -0.35] :to [0.50 0.40] :duration-s 3.0 :steps 500}
+   :sweep {:param :payload-kg :values [1.0 2.0 3.0 4.0 5.0]}
+   :quantity :peak-tau1-nm
+   :limit {:max 60.0 :basis "estimate: continuous shoulder torque of a light collaborative arm (~5 kg class)"}
+   :boundary {:lo 0.1 :hi 20.0}}]}
